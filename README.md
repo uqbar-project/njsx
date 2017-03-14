@@ -1,4 +1,5 @@
-#﻿ No-JSX
+No-JSX
+------
 
 A customizable and declarative interface for creating [React](https://facebook.github.io/react/) and [React Native](https://facebook.github.io/react-native/) components without *JSX* syntax.
 
@@ -16,7 +17,7 @@ const myView () =>
 
 ## Installation
 
-*NJSX* is available as the `njsx` package on [npm](https://www.npmjs.com/). Just run the following line in your project root:
+*NJSX* is available as the `njsx` package on [npm](https://www.npmjs.com/njsx). Just run the following line in your project root:
 
 ```bash
 npm install njsx --save
@@ -133,7 +134,7 @@ Take into account that **only one** rule will be applied to each argument, and e
 
 ## Contributions
 
-Please report any bugs, requests or ideas on [the issues section](./issues) and we will try to see to it as soon as possible.
+Please report any bugs, requests or ideas on [the issues section](https://github.com/uqbar-project/njsx/issues) and we will try to see to it as soon as possible.
 Also, pull requests are always welcome! Just try to keep it small and clean.
 
 
