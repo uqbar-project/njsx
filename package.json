@@ -1,0 +1,35 @@
+{
+  "name": "njsx",
+  "version": "1.0.0",
+  "description": "No-JSX: A customizable interface for creating React and React-Native components without JSX syntax.",
+  "repository": "uqbar-project/njsx",
+  "scripts": {
+    "test": "mocha --compilers js:babel-register",
+    "construct": "rm -r lib && babel --presets react-native src -d lib && cp ./package.json ./lib/ && cd lib && npm pack"
+  },
+  "dependencies": {
+    "react": "^15.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-react-native": "^1.9.1",
+    "babel-register": "^6.24.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  },
+  "babel": {
+    "presets": [
+      "react-native"
+    ]
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "jsx",
+    "tag",
+    "builder",
+    "syntax sugar"
+  ],
+  "author": "Nicolás Scarcella",
+  "license": "ISC"
+}
