@@ -1,11 +1,11 @@
 {
   "name": "njsx",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "No-JSX: A customizable interface for creating React and React-Native components without JSX syntax.",
   "repository": "uqbar-project/njsx",
   "scripts": {
     "test": "mocha --compilers js:babel-register",
-    "construct": "rm -r lib && babel --presets react-native src -d lib && cp ./package.json ./lib/ && cd lib && npm pack"
+    "release": "rm -r lib && babel --presets react-native src -d lib && cp -t ./lib/ ./package.json ./README.md && cd lib && npm publish ./"
   },
   "dependencies": {
     "react": "^15.4.2"

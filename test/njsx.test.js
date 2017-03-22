@@ -30,16 +30,16 @@ describe('NJSX', () => {
 
 		it('should be refinable by passing attributes as a hash', () => {
 			njsx.rules = [Rules.HASH_AS_ATRIBUTES]
-			const element = njsx('foo')({bar: 'meh'})()
+			const element = njsx('foo')({bar: 'baz'})()
 
-			expect(element).to.deep.equal(<foo bar='meh'/>)
+			expect(element).to.deep.equal(<foo bar='baz'/>)
 		})
 
 		it('should be refinable by passing a string representing a class name', () => {
 			njsx.rules = [Rules.STRING_AS_CLASS]
-			const element = njsx('foo')('.bar.meh')()
+			const element = njsx('foo')('.bar.baz')('.qux')()
 
-			expect(element).to.deep.equal(<foo className="bar meh"/>)
+			expect(element).to.deep.equal(<foo className="bar baz qux"/>)
 		})
 
 		it('should be refinable by passing a string representing content', () => {
@@ -65,23 +65,23 @@ describe('NJSX', () => {
 
 		it('should be refinable by passing other React elements as children', () => {
 			njsx.rules = [Rules.REACT_COMPONENT_AS_CHILD]
-			const element = njsx('foo')(<bar/>,<meh/>)()
+			const element = njsx('foo')(<bar/>,<baz/>)()
 
-			expect(element).to.deep.equal(<foo><bar/><meh/></foo>)
+			expect(element).to.deep.equal(<foo><bar/><baz/></foo>)
 		})
 
 		it('should be refinable by passing other NJSX elements as children', () => {
 			njsx.rules = [Rules.NJSX_COMPONENT_AS_CHILD]
-			const element = njsx('foo')(njsx('bar'), njsx('meh'))()
+			const element = njsx('foo')(njsx('bar'), njsx('baz'))()
 
-			expect(element).to.deep.equal(<foo><bar/><meh/></foo>)
+			expect(element).to.deep.equal(<foo><bar/><baz/></foo>)
 		})
 
 		it('should be refinable by passing an array of children', () => {
 			njsx.rules = [Rules.NJSX_COMPONENT_AS_CHILD]
-			const element = njsx('foo')([njsx('bar'), njsx('meh')])()
+			const element = njsx('foo')([njsx('bar'), njsx('baz')])()
 
-			expect(element).to.deep.equal(<foo><bar/><meh/></foo>)
+			expect(element).to.deep.equal(<foo><bar/><baz/></foo>)
 		})
 
 		it('should ignore null arguments', () => {
@@ -102,6 +102,27 @@ describe('NJSX', () => {
 			const element = njsx('foo')
 
 			expect(() => element((invalid) => 'argument')).to.throw(TypeError)
+		})
+
+		it('should be refinable by dynamic messages if a handler is defined', () => {
+			njsx.dynamicSelectorHandler = Rules.STRING_AS_CLASS.apply
+			const element = njsx('foo').bar.baz.qux()
+
+			expect(element).to.deep.equal(<foo className="bar baz qux"/>)
+		})
+
+		it('should be refinable by property key accessing if a handler is defined', () => {
+			njsx.dynamicSelectorHandler = Rules.STRING_AS_CLASS.apply
+			const element = njsx('foo')['.bar']['baz qux']()
+
+			expect(element).to.deep.equal(<foo className="bar baz qux"/>)
+		})
+
+		it('should not be refinable by dynamic messages if a handler is not defined', () => {
+			njsx.dynamicSelectorHandler = undefined
+			const element = njsx('foo').bar
+
+			expect(element).to.deep.equal(undefined)
 		})
 	})
 

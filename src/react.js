@@ -14,6 +14,8 @@ export const DEFAULT_REACT_RULES = [
 ]
 
 njsx.rules = DEFAULT_REACT_RULES
+njsx.dynamicSelectorHandler = RULES.STRING_AS_CLASS.apply
+
 
 export const a = njsx('a')
 export const abbr = njsx('abbr')

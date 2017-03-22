@@ -66,19 +66,19 @@ Each argument is process by a set of configurable rules to decide what change it
 
   - **Hashes** will become component's properties.
 
-    ```jsx
+    ```js
     img({src: somePath, onClick: someCallback})
     ```
 
     Applying a builder with a second hash will result in the new properties merging with the old, keeping the later in case of repetition.
 
-    ```jsx
+    ```js
     img({src: thisWillBeLost, onClick: thisWillRemain})({src: thisWillOverrideThePreviousPath})
     ```
 
   - **Strings**, **Numbers**, **Booleans**, **React Components** and even other **NJSX Builders** will become childrens.
 
-    ```jsx
+    ```js
     div(
       div('the answer is ', 42)  // <- No need for building
     )()
@@ -100,7 +100,18 @@ Each argument is process by a set of configurable rules to decide what change it
 Any unsuported argument application will raise a `TypeError`.
 
 
-## Advanced Customization
+If the running environment [supports ES6's Proxy](https://kangax.github.io/compat-table/es6/#test-Proxy), component's property access can be used to further refine an existing component. By default, in *react* projects, this is set to make each property access yield a new component with the property name as a class:
+
+```jsx
+//all these yield the same component
+p.highlighted.small("hello!")
+p['highlighted small']("hello!")
+p("hello!").highlighted.small
+<p className="highlighted small">hello!</p>
+```
+
+
+### Advanced Customization
 
 You don't like the way arguments are being handled? No problem! You can customize the rules *NJSX* uses for interpreting arguments to fine tune it to your needs. Add or remove supported argument applications, change the way they are processed or throw all away and start from scratch!
 
@@ -109,27 +120,40 @@ import njsx from 'njsx/njsx'   // This is NJSX core. Booth React and ReactNative
 import Rules from 'njsx/rules' // This module exports some common rule examples.
 ```
 
-Each *rule* is just an array with two functions. The first one tells if the rule can handle an argument, the other one extracts any property or child from it.
+Each *rule* is just an object with two methods:
+  - `appliesTo(argument)`: Tells if the rule can handle an argument applied to a component builder.
+  - `apply(argument, {props,children})`: Takes the argument applied to a component builder and the curent state of the builder (denoted by an object containing a `props` hash and a `children` array) and returns the next builder state.
 
 ```js
-Rules.STRING_AS_CHILD = [
-  arg => typeof arg === 'string', // This rule only applies to arguments of type string.
-  arg => [ {}, [arg] ]            // Applying this rule adds the string to the children array (but it doesn't change the properties).
-]
+Rules.STRING_AS_CHILD = {
+  // This rule only applies to arguments of type string.
+  appliesTo(arg) { return typeof arg === 'string' },
+  
+  // Applying this rule adds the string to the children array (but it doesn't change the properties).
+  apply(arg, {props, children}) { return {props, children: [...children, arg] }}
+}
 ```
 
 So you could easily create, for example, a rule that can handle anything that defines a `toString()` function and adds its result as a child.
 
 ```js
-const strigableAsChild = [
-  arg => arg.toString && typeof(arg.toString) === 'function',
-  arg => [ {}, [arg.toString()] ]
-]
+const strigableAsChild = {
+  appliesTo(arg) { return arg.toString && typeof(arg.toString) === 'function' },
+  apply(arg, {props, children}) { return {props, children: [...children, arg.toString()] }}
+}
 
 njsx.rules.push(stringableAsChild) // From now on, all builders will support this rule.
 ```
 
-Take into account that **only one** rule will be applied to each argument, and each rule will be tried in same order as it appears in the `njsx.rules` array, so be carefull to leave the more generic rules at the bottom.
+Take into account that **only one** rule will be applied to each argument, and each rule will be tested for applicability in the same order as it appears in the `njsx.rules` array, so be carefull to leave the more generic rules at the bottom.
+
+Finally, if you want to change how property access is handled by the builders, you can do so by setting the `njsx.dynamicSelectorHandler` property to a function that takes the accessed property name and the current builder state and returns the next state. For example, if you want the accesses to be treated as class names in a *react-native* project, you can do so by adding this line:
+
+```js
+  njsx.dynamicSelectorHandler = Rules.STRING_AS_CLASS.apply
+```
+
+You can also set this property to a *falsy* value to disable the whole property access behavior for builders.
 
 
 ## Contributions
