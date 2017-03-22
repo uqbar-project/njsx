@@ -106,7 +106,7 @@ If the running environment [supports ES6's Proxy](https://kangax.github.io/compa
 //all these yield the same component
 p.highlighted.small("hello!")
 p['highlighted small']("hello!")
-p("hello!").highlighted.small
+p("hello!").highlighted['.small']
 <p className="highlighted small">hello!</p>
 ```
 
