@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import React, {Component as ReactComponent} from 'react'
 import njsx from '../src/njsx.js'
 import Rules from '../src/rules.js'
@@ -123,6 +123,11 @@ describe('NJSX', () => {
 			const element = njsx('foo').bar
 
 			expect(element).to.deep.equal(undefined)
+		})
+
+		it('should not be refinable by dynamic messages after the component is built', () => {
+			njsx.dynamicSelectorHandler = assert.fail
+			const element = njsx('foo')().bar
 		})
 	})
 
