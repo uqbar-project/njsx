@@ -13,7 +13,7 @@ export const DEFAULT_REACT_NATIVE_RULES = [
   RULES.IGNORE_UNDEFINED
 ]
 
-njsx.rules = DEFAULT_REACT_NATIVE_RULES
+njsx.rules = njsx.rules || DEFAULT_REACT_NATIVE_RULES
 
 export const ActivityIndicator = njsx(ReactNative.ActivityIndicator)
 export const Button = njsx(ReactNative.Button)
