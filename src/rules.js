@@ -26,7 +26,7 @@ export default {
   },
   
   NJSX_COMPONENT_AS_CHILD: {
-    appliesTo(arg) { return arg.isNJSXComponent },
+    appliesTo(arg) { return typeof arg === 'object' && arg.isNJSXComponent },
     apply(arg, {props, children}) { return {props, children: [...children, arg()] }}
   },
   
