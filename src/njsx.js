@@ -16,9 +16,11 @@ const asDynamic = (component) => {
 
 export default function njsx(type, props={}, children=[]) {
 	const component = (...args) => {
-		const {props: finalProps, children: finalChildren} = flatten(args).reduce((previous, arg) =>
-			njsx.rules.find(rule => rule.appliesTo(arg)).apply(arg, previous)
-		, {props,children})
+		const {props: finalProps, children: finalChildren} = flatten(args).reduce((previous, arg) => {
+			const rule = njsx.rules.find(rule => rule.appliesTo(arg))
+			if(!rule) {throw new TypeError(`Unsupported NJSX argument: ${arg}`)}
+			return rule.apply(arg, previous)
+		}, {props,children})
 
 		return args.length === 0
 			? createElement(type, finalProps, ...finalChildren)

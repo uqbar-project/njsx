@@ -1,3 +1,5 @@
+const {isArray} = Array
+
 export default {
   
   HASH_AS_ATRIBUTES: {
@@ -8,6 +10,17 @@ export default {
   STRING_AS_CLASS: {
     appliesTo(arg) { return typeof arg === 'string' && arg.trim().startsWith('.') },
     apply(arg, {props: {className = '', otherProps}, children}) { return {props: {...otherProps, className: [...className.split(' '), ...arg.split('.')].map(c=> c.trim()).filter(String).join(' ')} , children } }
+  },
+
+  STYLE_AS_STYLE: {
+    appliesTo(arg) { return typeof arg === 'object' && arg.styleId },
+    apply(arg, {props, children}) {
+      let style = null
+      if(!props.style) style = arg.styleId
+      else if(isArray(props.style)) style = [...props.style, arg.styleId]
+      else style = [props.style, arg.styleId]
+      return { props:{...props, style}, children }
+    }
   },
   
   STRING_AS_CHILD: {
