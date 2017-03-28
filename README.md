@@ -1,6 +1,8 @@
 No-JSX
 ------
 
+[![Build Status](https://travis-ci.org/uqbar-project/njsx.svg?branch=master)](https://travis-ci.org/uqbar-project/njsx)
+
 A customizable and declarative interface for creating [React](https://facebook.github.io/react/) and [React Native](https://facebook.github.io/react-native/) components without *JSX* syntax.
 
 If you love *React* but don't quite like the embeded *HTML* tags this library may be what you are looking for.
