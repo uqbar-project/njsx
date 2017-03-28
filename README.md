@@ -86,11 +86,27 @@ Each argument is process by a set of configurable rules to decide what change it
 
     Notice that, since builders can be children too, most of the time there is no need to apply them with no args to create components.
 
-  - **Strings starting with a dot** will be interpreted as a *classes*.
+  - In *react* projects, **Strings starting with a dot** will be interpreted as a *classes*.
 
     ```jsx
     div('.thisIsAClass .thisIsAnotherClass')(
       'Some content'
+    )
+    ```
+
+  - In *react-native* projects, **StyleSheet entries** can be interpreted as *styles*. Just import `StyleSheet` from `njsx/react-native` instead of `react-native`.
+
+    ```jsx
+    import {StyleSheet, View, Text} from 'njsx/react-native'
+
+    // Same StyleSheet interface
+    StyleSheet.create({
+      container: { /* ...your regular react-native styles... */ }
+      description: { /* ...your regular react-native styles... */ }
+    })
+
+    View(styles.container)(
+      Text(style.description)("These are styled!")
     )
     ```
 
