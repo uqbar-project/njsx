@@ -129,12 +129,33 @@ p("hello!").highlighted['.small']
 ```
 
 
+### Building Third-Party Components
+
+NJSX is not just for default components! You can get a builder for **any** *React* or *React-Native* component by applying it to the `njsx` function.
+
+```js
+import njsx from 'njsx' // This is NJSX core. Booth React and ReactNative use it to define their builders.
+import {SomeComponent} from 'someOtherModule'
+
+const SomeFunctionalComponent = (props) => //...whatever you want to render 
+class SomeStatefulComponent extends React.Component {
+  render() {
+    return //...whatever you want to render 
+  }
+}
+
+const someComponent = njsx(SomeComponent)                     // This is a NJSX builder for SomeComponent
+const someFunctionalComponent = njsx(SomeFunctionalComponent) // This is a NJSX builder for SomeFunctionalComponent
+const someStatefulComponent = njsx(SomeFunctionalComponent)   // This is a NJSX builder for SomeStatefulComponent
+```
+
+
 ### Advanced Customization
 
 You don't like the way arguments are being handled? No problem! You can customize the rules *NJSX* uses for interpreting arguments to fine tune it to your needs. Add or remove supported argument applications, change the way they are processed or throw all away and start from scratch!
 
 ```js
-import njsx from 'njsx/njsx'   // This is NJSX core. Booth React and ReactNative use it to define their builders.
+import njsx from 'njsx'        
 import Rules from 'njsx/rules' // This module exports some common rule examples.
 ```
 

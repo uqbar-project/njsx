@@ -1,4 +1,4 @@
-import njsx from './njsx'
+import njsx from './index'
 import RULES from './rules'
 
 export const DEFAULT_REACT_RULES = [

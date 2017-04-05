@@ -1,6 +1,6 @@
 {
   "name": "njsx",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "No-JSX: A customizable interface for creating React and React-Native components without JSX syntax.",
   "repository": "uqbar-project/njsx",
   "scripts": {

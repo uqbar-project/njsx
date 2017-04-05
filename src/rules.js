@@ -1,10 +1,22 @@
 const {isArray} = Array
 
+function mergedStyle(props, style) {
+  if(!props.style && !style) return {}
+  if(!style) return {style: props.style}
+
+  const newStyle = style.styleId ? style.styleId : style
+  if(!props.style) return {style: newStyle}
+  if(isArray(props.style)) return {style: [...props.style, newStyle]}
+  return {style: [props.style, newStyle]}
+}
+
 export default {
   
   HASH_AS_ATRIBUTES: {
     appliesTo(arg) { return typeof arg === 'object' },
-    apply(arg, {props, children}) { return {props: {...props, ...arg}, children} }
+    apply(arg, {props, children}) {
+      return {props: {...props, ...arg, ...mergedStyle(props, arg.style)}, children}
+    }
   },
   
   STRING_AS_CLASS: {
@@ -14,13 +26,7 @@ export default {
 
   STYLE_AS_STYLE: {
     appliesTo(arg) { return typeof arg === 'object' && arg.styleId },
-    apply(arg, {props, children}) {
-      let style = null
-      if(!props.style) style = arg.styleId
-      else if(isArray(props.style)) style = [...props.style, arg.styleId]
-      else style = [props.style, arg.styleId]
-      return { props:{...props, style}, children }
-    }
+    apply(arg, {props, children}) { return { props:{...props, ...mergedStyle(props,arg)}, children } }
   },
   
   STRING_AS_CHILD: {

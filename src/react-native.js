@@ -1,5 +1,5 @@
 import ReactNative from 'react-native'
-import njsx from './njsx'
+import njsx from './index'
 import RULES from './rules'
 const {entries, assign} = Object
 

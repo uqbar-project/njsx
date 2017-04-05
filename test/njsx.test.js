@@ -1,7 +1,7 @@
 import { expect, assert } from 'chai'
 import mock from 'mock-require'
 import React, {Component as ReactComponent} from 'react'
-import njsx from '../src/njsx.js'
+import njsx from '../src/index.js'
 import Rules from '../src/rules.js'
 
 const {keys, assign, defineProperty} = Object
@@ -167,6 +167,13 @@ describe('NJSX', () => {
 				const component = njsx('foo')({style: 5})(styleSheet.style)()
 
 				expect(component).to.deep.equal(<foo style={[5,1]}/>)
+			})
+
+			it('style is already defined and a new style is set as hash attribute', () => {
+				njsx.rules = [Rules.STYLE_AS_STYLE, Rules.HASH_AS_ATRIBUTES]
+				const component = njsx('foo')(styleSheet.style)({style: 5})()
+
+				expect(component).to.deep.equal(<foo style={[1,5]}/>)
 			})
 
 		})
