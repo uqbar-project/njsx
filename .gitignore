@@ -1,2 +1,4 @@
-/lib/
-/node_modules/
+.vscode
+dist
+node_modules
+*.tgz

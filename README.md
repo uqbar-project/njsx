@@ -1,105 +1,291 @@
-No-JSX
-------
+# No-JSX
 
 [![Build Status](https://travis-ci.org/uqbar-project/njsx.svg?branch=master)](https://travis-ci.org/uqbar-project/njsx)
 
-A customizable and declarative interface for creating [React](https://facebook.github.io/react/) and [React Native](https://facebook.github.io/react-native/) components without *JSX* syntax.
+A pure function based interface for creating [React](https://facebook.github.io/react/) and [React Native](https://facebook.github.io/react-native/) components without *JSX* tags.
 
-If you love *React* but don't quite like the embeded *HTML* tags this library may be what you are looking for.
+If you love *React* but don't quite like the embeded *HTML* tags this library may be what you are looking for. Construct your components with code only in a clean, declarative way.
 
 ```js
 const myView () =>
-  div('.App')(
-    div('.App-header')(
-      img('.App-logo')({src: logo, alt:'logo'}),
+  div.app(
+    div.header(
+      img({src: logo, alt:'logo'}),
       h2('Welcome to NJSX')
     )
   )()
 ```
+-------------------------------------------------
+
+#### Table of Content
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Getting a Builder](#getting-a-builder)
+    - [Default Component Builders](#default-component-builders)
+    - [Third-Party Component Builders](#third-party-component-builders)
+  - [Creating Elements](#creating-elements)
+  - [Refining Builders](#refining-builders)
+    - [Builder Arguments](#builder-arguments)
+    - [Dynamic Selectors](#dynamic-selectors)
+  - [Argument Transformation](#argument-transformation)
+- [Working with older versions](#working-with-older-versions)
+- [Changelog](#changelog)
+- [Contributions](#contributions)
+- [License](#license)
+
+-------------------------------------------------
 
 ## Installation
 
-*NJSX* is available as the `njsx` package on [npm](https://www.npmjs.com/njsx). Just run the following line in your project root:
+*NJSX* is available on [npm](https://www.npmjs.com), just pick between the *React* and *React Native* flavours and add it to your project's dependencies.
 
+**For React Projects:**
 ```bash
-npm install njsx --save
+npm install njsx-react --save
 ```
+
+**For React Native Projects:**
+```bash
+npm install njsx-react-native --save
+```
+
 
 ## Usage
 
-*NJSX* provides a series of builder functions to cleanly instantiate *React* or *React Native* components. Just import the components you need from right module and you are ready to go.
+*NJSX* is super easy to use: It's all about **Builder Functions**.
+
+You can use *Builders* to to cleanly instantiate *React* and *React Native* elements, or further refine your component configuration just by applying them.
+
+
+### Getting a Builder
+
+#### Default Component Builders
+
+*NJSX* provides *Builder Functions* for all the default *React* and *React Native* components. Just import whatever element you need from the `react` or `react-native` modules and you are ready to go:
 
 ```js
 // React project
-import {div, p} from 'njsx/react'
+import {div, p} from 'njsx-react'
 
 // React Native project
-import {View, Text} from 'njsx/react-native'
+import {View, Text} from 'njsx-react-native'
 ```
 
+#### Third-Party Component Builders
 
-### Building Components
+NJSX is not just for default components! You can get a builder for **any** component just by wrapping it with the `njsx` adapter.
 
-Each imported *NJSX* builder is a function that once applied with no arguments will yield a **React Component**.
+```js
+// This is NJSX core. Both njsx-react and njsx-react-native use it to define their builders.
+import njsx from 'njsx'
+import {SomeThirdPartyComponent} from 'someLibrary'
 
-```jsx
-import {div} from 'njsx/react'
+const SomeFunctionalComponent = (props) => ...
+class SomeStatefulComponent extends React.Component {
+  render() { ... }
+}
 
-const someDiv = <div></div>
-const anEqualDiv = div()
-// These two lines yield the same!
+// These are all valid Component Builders.
+const someComponent = njsx(SomeComponent)            
+const someFunctionalComponent = njsx(SomeFunctionalComponent)
+const someStatefulComponent = njsx(SomeFunctionalComponent)
+
+// You can even use a string as component type (although it's not recommended):
+const aDivBuilder = njsx('div')
 ```
 
-If the builders are applied with one or more arguments, these will be used to configure the generated components. Each builder can be applied any number of times (up until you apply it with no arguments to construct the component).
+### Creating Elements
+
+Each *NJSX* builder, once **applied with no arguments**, will return a **ReactElement** just as if you had used the component inside a *JSX* tag:
 
 ```jsx
-import {p} from 'njsx/react'
+import {div} from 'njsx-react'
 
-p('some text')()
-p('some', ' ', 'text')()
-p('some ')('text')()
-p(['some', ' '],['text'])()
+// These two lines are equivalent.
+<div></div>
+div()
+```
 
-//All these lines yield the same component
+This means that *JSX* and *NJSX* elements are completely interchangeable. You can use components created from builders as children for *JSX*'s tags, or refine a builder with tag shaped children, so you can try *NJSX* on any react based project and integrate it gradually.
+
+### Refining Builders
+
+Of course, an empty element is not that useful, so how do you customize it?
+
+When a *Builder* is applied with **one or more arguments**, these will be used to configure the building component. Refining a *Builder* this way returns another ***Builder***, so you can keep refining your component any number of times.
+
+```jsx
+import {p} from 'njsx-react'
+
+p('some text')
+p('some', ' ', 'text')
+p('some')(' ')('text')
+p(['some', ' ', 'text'])
+
+// All these lines build the same:
 <p>some text</p>
 ```
 
-Each argument is process by a set of configurable rules to decide what change it represents for the component. Here are some examples of argument applications you can use right out of the box:
+It's important to note that refining a builder causes **no side effects or state changes at all**. This means you can safely reuse *Builders*, or partially refine one and pass it forward.
 
-  - **Hashes** will become component's properties.
+#### Builder Arguments
 
-    ```js
-    img({src: somePath, onClick: someCallback})
+*Builders* will get refined in a different way, depending on what arguments you apply them with:
+
+  - `Basic Objects` are treated as **Component Properties**. Refining a builder with a second set of properties will result in the merge of both, favoring the later in case of repetition.
+  
+    ```jsx
+    img({src: path, onClick: cb})
+    img({src: path}, {onClick: cb})
+    img({src: thisWillBeLost, onClick: cb})({src: path})
+
+    // All these lines build the same:
+    <img src={path} onClick:{cb}></img>
     ```
 
-    Applying a builder with a second hash will result in the new properties merging with the old, keeping the later in case of repetition.
 
-    ```js
-    img({src: thisWillBeLost, onClick: thisWillRemain})({src: thisWillOverrideThePreviousPath})
-    ```
-
-  - **Strings**, **Numbers**, **Booleans**, **React Components** and even other **NJSX Builders** will become childrens.
-
-    ```js
-    div(
-      div('the answer is ', 42)  // <- No need for building
-    )()
-    ```
-
-    Notice that, since builders can be children too, most of the time there is no need to apply them with no args to create components.
-
-  - In *react* projects, **Strings starting with a dot** will be interpreted as a *classes*.
+  - `Strings`, `Numbers`, `React Elements` and even other `Builders` will become **Component Children**.
 
     ```jsx
-    div('.thisIsAClass .thisIsAnotherClass')(
+    div(
+      div('the answer is ', 42)  // <- No need for building it.
+    )
+
+    // This line builds:
+    <div><div>the answer is 42</div></div>
+    ```
+
+    Notice that, since *Builders* can be children too, most of the time you won't be needing to apply them with no arguments to instantiate elements.
+
+
+  - `null`, `undefined` and `Booleans` will be ignored. This allows for a clean way to conditionally set properties and children using `&&` and `||`.
+
+    ```jsx
+    div(null)
+    div(undefined)
+    div(false && "this won't show")
+
+    //All these lines the same:
+    <div/>
+    ```
+
+  - `Arrays` of any valid argument will be handled as a sequence of refinements.
+
+    ```jsx
+    const guards = ['Nobby', 'Colon', 'Carrot']
+    
+    ul(guards.map(guard => li(guard)))
+    ul(guards.map(li))
+
+    //All these lines the same:
+    <ul>{guards.map(guard => <li>{guard}</li>)}</ul>
+    ```
+
+
+  - Finally, you can also pass a `Refinement Function`, which should take the previous *Component Properties* (including the `children` field) and return the next one.
+
+    ```jsx
+    const myRefinement = (src, text) => (prev) =>
+      {...prev, {src, children: text} }
+    img(myRefinement(foo, bar))
+
+    // This line builds:
+    <img src={foo}>bar</img>
+    ```
+
+To wrap it all, any unsuported argument application will raise a `TypeError`.
+
+
+#### Dynamic Selectors
+
+You can also refine a *Builder* by accessing any keyword as if it was a property. A common use for this is to treat the keyword as a `className`, so you can add classes to components by just naming them:
+
+```jsx
+p.highlighted.small("Nice!")
+p['highlighted']['small']("Nice!")
+p['highlighted small']("Nice!")
+p("Nice!").highlighted['.small']
+
+//All these lines build the same:
+<p className="highlighted small">Nice!</p>
+```
+
+Treating these selectors as class names is the default behavior of *NJSX*, but you can change it to whatever you want by changing the `NJSXConfig.  dynamicSelectorHandler` setting:
+
+```jsx
+import { NJSXConfig } from 'njsx'
+
+// You can set any function that receives the key and returns a valid argument.
+NJSXConfig.dynamicSelectorHandler = (key: string) => key
+
+div.foo.bar
+// This would yield
+<div>foobar</div>
+
+
+// That means you could also return a refining function!
+NJSXConfig.dynamicSelectorHandler = (id: string) => (prev) =>
+  {...prev, id}
+
+div.baz
+// This would yield
+<div id="baz"/>
+
+
+// You can also disable the whole thing by setting it to undefined.
+NJSXConfig.dynamicSelectorHandler = undefined
+```
+
+
+Notice that this feature can only be used on [environments that support *ES6's Proxy*](https://kangax.github.io/compat-table/es6/#test-Proxy) so, sadly, it's not available on *React-Native* projects.
+
+
+## Argument Transformation
+
+You don't like the way arguments are being handled? No problem! You can customize the way *NJSX's Builders* interpret arguments to fine tune it to your needs.
+
+The `NJSXConfig` object can be used to specify **Argument Transformations**, which are just functions that take each argument and return whatever you want that argument to be. These functions are automatically called each time a *Builder* is applied.
+
+```jsx
+import { NJSXConfig } from 'njsx'
+import {p} from 'njsx-react'
+
+const translations = {
+  "this should be translated": "ook"
+}
+
+NJSXConfig.argumentTransformations.push( arg =>
+  typeof arg === 'string' && arg.startsWith('!')
+    ? translations[arg]
+    : arg
+)
+
+p("!this should be translated")
+
+// This build:
+<p>ook</p>
+```
+
+Please take into account that **all transformations are reduced on every argument**, so don't overdo it and mind the order.
+
+*NJSX* comes with some of these transformations set up by default:
+
+  - In *React* projects, **Strings starting with a dot** will be interpreted as a *classNames*:
+
+    ```jsx
+    div('.foo .bar')(
       'Some content'
     )
+
+    // This builds:
+    <div className="foo bar">Some content</div>
     ```
 
-  - In *react-native* projects, **StyleSheet entries** can be interpreted as *styles*. Just import `StyleSheet` from `njsx/react-native` instead of `react-native`.
+  - In *React-Native* projects, **StyleSheet** arguments are interpreted as *styles* (Just import `StyleSheet` from `njsx-react-native` instead of `react-native`).
 
     ```jsx
-    import {StyleSheet, View, Text} from 'njsx/react-native'
+    import {StyleSheet, View, Text} from 'njsx-react-native'
 
     // Same StyleSheet interface
     StyleSheet.create({
@@ -112,93 +298,39 @@ Each argument is process by a set of configurable rules to decide what change it
     )
     ```
 
-  - **Null** and **Undefined** arguments are ignored.
+If you rather all your arguments to just be interpreted as they are, you can disable this feature by setting the `NJSXConfig.argumentTransformations` to an empty array.
 
 
-Any unsuported argument application will raise a `TypeError`.
+## Working with older versions
+
+If you are working with an older release this documentation might not be of any use to you. We follow the [semantic versioning standard](https://semver.org/) so any difference on the Major version will probably imply some incompatibilities. Please refer to [your version's branch](https://github.com/uqbar-project/njsx/releases) README file.
 
 
-If the running environment [supports ES6's Proxy](https://kangax.github.io/compat-table/es6/#test-Proxy), component's property access can be used to further refine an existing component. By default, in *react* projects, this is set to make each property access yield a new component with the property name as a class:
+## Changelog
 
-```jsx
-//all these yield the same component
-p.highlighted.small("hello!")
-p['highlighted small']("hello!")
-p("hello!").highlighted['.small']
-<p className="highlighted small">hello!</p>
-```
+### v3.0.1
+- Full Typescript support! Exporting type definitions.
+- Removed Rule mechanics in favor of simpler configuration.
+- Argument transformations.
+- Full SVG elements support.
 
+### v2.1.5
+- Support for React-Native styles as builder arguments.
+- React-Native components will not be evaluated until used.
 
-### Building Third-Party Components
+### v.2.0.0
+- Builders can now be refined by attribute access (ES6+).
+- Rules are now defined with objects instead of arrays.
 
-NJSX is not just for default components! You can get a builder for **any** *React* or *React-Native* component by applying it to the `njsx` function.
-
-```js
-import njsx from 'njsx' // This is NJSX core. Booth React and ReactNative use it to define their builders.
-import {SomeComponent} from 'someOtherModule'
-
-const SomeFunctionalComponent = (props) => //...whatever you want to render 
-class SomeStatefulComponent extends React.Component {
-  render() {
-    return //...whatever you want to render 
-  }
-}
-
-const someComponent = njsx(SomeComponent)                     // This is a NJSX builder for SomeComponent
-const someFunctionalComponent = njsx(SomeFunctionalComponent) // This is a NJSX builder for SomeFunctionalComponent
-const someStatefulComponent = njsx(SomeFunctionalComponent)   // This is a NJSX builder for SomeStatefulComponent
-```
-
-
-### Advanced Customization
-
-You don't like the way arguments are being handled? No problem! You can customize the rules *NJSX* uses for interpreting arguments to fine tune it to your needs. Add or remove supported argument applications, change the way they are processed or throw all away and start from scratch!
-
-```js
-import njsx from 'njsx'        
-import Rules from 'njsx/rules' // This module exports some common rule examples.
-```
-
-Each *rule* is just an object with two methods:
-  - `appliesTo(argument)`: Tells if the rule can handle an argument applied to a component builder.
-  - `apply(argument, {props,children})`: Takes the argument applied to a component builder and the curent state of the builder (denoted by an object containing a `props` hash and a `children` array) and returns the next builder state.
-
-```js
-Rules.STRING_AS_CHILD = {
-  // This rule only applies to arguments of type string.
-  appliesTo(arg) { return typeof arg === 'string' },
-  
-  // Applying this rule adds the string to the children array (but it doesn't change the properties).
-  apply(arg, {props, children}) { return {props, children: [...children, arg] }}
-}
-```
-
-So you could easily create, for example, a rule that can handle anything that defines a `toString()` function and adds its result as a child.
-
-```js
-const strigableAsChild = {
-  appliesTo(arg) { return arg.toString && typeof(arg.toString) === 'function' },
-  apply(arg, {props, children}) { return {props, children: [...children, arg.toString()] }}
-}
-
-njsx.rules.push(stringableAsChild) // From now on, all builders will support this rule.
-```
-
-Take into account that **only one** rule will be applied to each argument, and each rule will be tested for applicability in the same order as it appears in the `njsx.rules` array, so be carefull to leave the more generic rules at the bottom.
-
-Finally, if you want to change how property access is handled by the builders, you can do so by setting the `njsx.dynamicSelectorHandler` property to a function that takes the accessed property name and the current builder state and returns the next state. For example, if you want the accesses to be treated as class names in a *react-native* project, you can do so by adding this line:
-
-```js
-  njsx.dynamicSelectorHandler = Rules.STRING_AS_CLASS.apply
-```
-
-You can also set this property to a *falsy* value to disable the whole property access behavior for builders.
+### v1.0.1
+- React and React-Native builders.
+- Configurable rules for handling builder arguments.
 
 
 ## Contributions
 
-Please report any bugs, requests or ideas on [the issues section](https://github.com/uqbar-project/njsx/issues) and we will try to see to it as soon as possible.
-Also, pull requests are always welcome! Just try to keep it small and clean.
+Please report any bugs, requests or ideas on [the issues section of this repository](https://github.com/uqbar-project/njsx/issues) and we will try to see to it as soon as possible.
+Pull requests are always welcome! Just try to keep them small and clean.
 
 
 ## License

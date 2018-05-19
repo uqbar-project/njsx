@@ -1,28 +1,35 @@
 {
   "name": "njsx",
-  "version": "2.1.8",
-  "description": "No-JSX: A customizable interface for creating React and React-Native components without JSX syntax.",
-  "repository": "uqbar-project/njsx",
+  "version": "3.0.1-SNAPSHOT",
+  "description": "No-JSX: A customizable interface for creating React and React-Native components without JSX syntax. For more information visit https://github.com/uqbar-project/njsx.",
+  "repository": "https://github.com/uqbar-project/njsx",
+  "author": "Nicolás Scarcella",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "mocha --compilers js:babel-register",
-    "package": "npm test && rm -rf lib && babel --presets react-native src -d lib && cp -t ./lib/ ./package.json ./README.md && cd lib && npm pack && cd ..",
-    "release": "npm run package && cd lib && npm publish ./ && cd .."
+    "build": "rm -rf dist && tsc",
+    "test": "mocha --recursive --require ts-node/register src/**/*.test.tsx",
+    "prepublishOnly": "yarn test && yarn build"
   },
-  "dependencies": {
-    "react": "^15.4.2"
+  "peerDependencies": {
+    "react": ">=15.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.0",
-    "babel-preset-react-native": "^1.9.1",
-    "babel-register": "^6.24.0",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0",
-    "mock-require": "^2.0.1"
-  },
-  "babel": {
-    "presets": [
-      "react-native"
-    ]
+    "@types/react": "^16.3.14",
+    "@types/chai": "^4.1.3",
+    "@types/mocha": "^5.2.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "mock-require": "^3.0.2",
+    "react": "15.0.0",
+    "ts-mocha": "^1.2.0",
+    "tslint": "^5.10.0",
+    "tslint-react": "^3.5.1",
+    "typescript": "^2.8.3"
   },
   "keywords": [
     "react",
@@ -30,8 +37,7 @@
     "jsx",
     "tag",
     "builder",
+    "functional",
     "syntax sugar"
-  ],
-  "author": "Nicolás Scarcella",
-  "license": "ISC"
+  ]
 }
