@@ -1,6 +1,6 @@
 {
   "name": "njsx",
-  "version": "3.0.1-SNAPSHOT",
+  "version": "3.0.1",
   "description": "No-JSX: A customizable interface for creating React and React-Native components without JSX syntax. For more information visit https://github.com/uqbar-project/njsx.",
   "repository": "https://github.com/uqbar-project/njsx",
   "author": "Nicolás Scarcella",
@@ -12,8 +12,9 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "lint": "tslint src/index.ts",
     "test": "mocha --recursive --require ts-node/register src/**/*.test.tsx",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "yarn install && yarn lint && yarn test && yarn build"
   },
   "peerDependencies": {
     "react": ">=15.0.0"

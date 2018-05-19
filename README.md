@@ -31,7 +31,6 @@ const myView () =>
     - [Dynamic Selectors](#dynamic-selectors)
   - [Argument Transformation](#argument-transformation)
 - [Working with older versions](#working-with-older-versions)
-- [Changelog](#changelog)
 - [Contributions](#contributions)
 - [License](#license)
 
@@ -305,27 +304,6 @@ If you rather all your arguments to just be interpreted as they are, you can dis
 ## Working with older versions
 
 If you are working with an older release this documentation might not be of any use to you. We follow the [semantic versioning standard](https://semver.org/) so any difference on the Major version will probably imply some incompatibilities. Please refer to [your version's branch](https://github.com/uqbar-project/njsx/releases) README file.
-
-
-## Changelog
-
-### v3.0.1
-- Full Typescript support! Exporting type definitions.
-- Removed Rule mechanics in favor of simpler configuration.
-- Argument transformations.
-- Full SVG elements support.
-
-### v2.1.5
-- Support for React-Native styles as builder arguments.
-- React-Native components will not be evaluated until used.
-
-### v.2.0.0
-- Builders can now be refined by attribute access (ES6+).
-- Rules are now defined with objects instead of arrays.
-
-### v1.0.1
-- React and React-Native builders.
-- Configurable rules for handling builder arguments.
 
 
 ## Contributions
