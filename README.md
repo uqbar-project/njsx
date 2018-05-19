@@ -1,6 +1,7 @@
 # No-JSX
 
 [![Build Status](https://travis-ci.org/uqbar-project/njsx.svg?branch=master)](https://travis-ci.org/uqbar-project/njsx)
+[![npm version](https://badge.fury.io/js/njsx.svg)](https://badge.fury.io/js/njsx)
 
 A pure function based interface for creating [React](https://facebook.github.io/react/) and [React Native](https://facebook.github.io/react-native/) components without *JSX* tags.
 
