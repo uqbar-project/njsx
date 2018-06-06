@@ -8,7 +8,7 @@ A pure function based interface for creating [React](https://facebook.github.io/
 If you love *React* but don't quite like the embeded *HTML* tags this library may be what you are looking for. Construct your components with code only in a clean, declarative way.
 
 ```js
-const myView () =>
+const myView = () =>
   div.app(
     div.header(
       img({src: logo, alt:'logo'}),
