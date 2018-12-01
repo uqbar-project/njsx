@@ -321,8 +321,8 @@ Becomes:
 import { compose } from 'rambda'
 
 compose(
-  PersistGate({ store }),
-  BrowserRouter({ loading: null, persistor }),
+  Provider({ store })
+  PersistGate({ loading: null, persistor }),
   BrowserRouter,
   Route
 )({ path: '/', component: App })()
