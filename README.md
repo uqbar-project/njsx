@@ -30,6 +30,7 @@ const myView = () =>
     - [Builder Arguments](#builder-arguments)
     - [Dynamic Selectors](#dynamic-selectors)
   - [Argument Transformation](#argument-transformation)
+  - [Point-free](#point-free)
 - [Working with older versions](#working-with-older-versions)
 - [Contributions](#contributions)
 - [License](#license)
@@ -300,6 +301,34 @@ Please take into account that **all transformations are reduced on every argumen
 
 If you rather all your arguments to just be interpreted as they are, you can disable this feature by setting the `NJSXConfig.argumentTransformations` to an empty array.
 
+## Point-free
+
+Think point-free composition in your render function is a `pipe` dream? Think again, you can use `njsx` to compose components in a point-free style to help with the readability of deeply nested react components:
+
+```jsx
+<Provider store={store}>
+  <PersistGate loading={null} persistor={persistor}>
+    <BrowserRouter>
+      <Route path="/" component={App} />
+    </BrowserRouter>
+  </PersistGate>
+</Provider>
+```
+
+Becomes:
+
+```js
+import { compose } from 'rambda'
+
+compose(
+  Provider({ store }),
+  PersistGate({ loading: null, persistor }),
+  BrowserRouter,
+  Route
+)({ path: '/', component: App })()
+```
+
+Please note that `compose` and `pipe` functions vary in implementation and not all will work with `njsx`, for example, `lodash/fp` seems to have issues at the moment, while `rambda` is working without issue.
 
 ## Working with older versions
 
