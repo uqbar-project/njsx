@@ -301,7 +301,7 @@ Please take into account that **all transformations are reduced on every argumen
 
 If you rather all your arguments to just be interpreted as they are, you can disable this feature by setting the `NJSXConfig.argumentTransformations` to an empty array.
 
-## Point-free style
+## Point-free
 
 Think point-free composition in your render function is a `pipe` dream? Think again, you can use `njsx` to compose components in a point-free style to help with the readability of deeply tested react components:
 
