@@ -315,7 +315,7 @@ Think point-free composition in your render function is a `pipe` dream? Think ag
 </Provider>
 ```
 
-becomes:
+Becomes:
 
 ```js
 import { compose } from 'rambda'
