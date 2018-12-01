@@ -306,13 +306,13 @@ If you rather all your arguments to just be interpreted as they are, you can dis
 Think point-free composition in your render function is a `pipe` dream? Think again, you can use `njsx` to compose components in a point-free style to help with the readability of deeply tested react components:
 
 ```jsx
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <BrowserRouter>
-          <Route path="/" component={App} />
-        </BrowserRouter>
-      </PersistGate>
-    </Provider>
+<Provider store={store}>
+  <PersistGate loading={null} persistor={persistor}>
+    <BrowserRouter>
+      <Route path="/" component={App} />
+    </BrowserRouter>
+  </PersistGate>
+</Provider>
 ```
 
 becomes:
@@ -320,12 +320,12 @@ becomes:
 ```js
 import { compose } from 'rambda'
 
-    compose(
-      PersistGate({ store }),
-      BrowserRouter({ loading: null, persistor }),
-      BrowserRouter,
-      Route
-    )({ path: '/', component: App })()
+compose(
+  PersistGate({ store }),
+  BrowserRouter({ loading: null, persistor }),
+  BrowserRouter,
+  Route
+)({ path: '/', component: App })()
 ```
 
 Please note that `compose` and `pipe` functions vary in implementation and not all will work with `njsx`, for example, `lodash/fp` seems to have issues at the moment, while `rambda` is working without issue.
