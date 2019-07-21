@@ -303,32 +303,33 @@ If you rather all your arguments to just be interpreted as they are, you can dis
 
 ## Point-free
 
-Think point-free composition in your render function is a `pipe` dream? Think again, you can use `njsx` to compose components in a point-free style to help with the readability of deeply nested react components:
+Think point-free composition in your render function is a `pipe` dream? Think again! You can use `njsx` to compose components in a point-free style to increase the readability of deeply nested components:
 
 ```jsx
-<Provider store={store}>
-  <PersistGate loading={null} persistor={persistor}>
-    <BrowserRouter>
-      <Route path="/" component={App} />
-    </BrowserRouter>
-  </PersistGate>
-</Provider>
+const Root = ({ store }) => (
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <Router history={history}>
+        <Route path='/' component={App} />
+      </Router>
+    </PersistGate>
+  </Provider>
+)
 ```
 
 Becomes:
 
 ```js
-import { compose } from 'rambda'
+import { compose } from 'njsx'
 
-compose(
-  Provider({ store }),
-  PersistGate({ loading: null, persistor }),
-  BrowserRouter,
-  Route
-)({ path: '/', component: App })()
+const Root = ({ store }) =>
+  compose(
+    Provider({ store }),
+    PersistGate({ loading: null, persistor }),
+    Router({ history }),
+    Route
+  )({ path: '/', component: App })()
 ```
-
-Please note that `compose` and `pipe` functions vary in implementation and not all will work with `njsx`, for example, `lodash/fp` seems to have issues at the moment, while `rambda` is working without issue.
 
 ## Working with older versions
 
