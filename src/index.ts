@@ -98,4 +98,39 @@ function addChild<P>(state: BuilderState<P>, child: ReactNode) {
   return assign({}, state, { children: [...state.children || [], child] })
 }
 
+// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// Compose
+// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+const err = 'compose: Functions required'
+
+const isFunction = (val: any): val is Function => typeof val === 'function'
+
+function applyPipe(f: any, g: any) {
+  if (!isFunction(g)) {
+    throw new TypeError(err)
+  }
+
+  return (...args: any[]) => g.call(null, f.apply(null, args))
+}
+
+// compose :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
+export function compose(...args: any[]) {
+  if (!arguments.length) {
+    throw new TypeError(err)
+  }
+
+  const fns = args.slice().reverse()
+
+  const head = fns[0]
+
+  if (!isFunction(head)) {
+    throw new TypeError(err)
+  }
+
+  const tail = fns.slice(1).concat((x: any) => x)
+
+  return tail.reduce(applyPipe, head)
+}
+
 export default njsx as NJSX
