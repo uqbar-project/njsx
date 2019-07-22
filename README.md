@@ -351,17 +351,15 @@ export const Loading = () => (
 NJSX nested:
 ```js
 export const Loading = () =>
-  div ({className: 'row', style: {marginTop: '10em'}}) (
-    div ({className: 'col-sm-7', style: {float: 'none', margin: 'auto'}}) (
-      div ({className: 'well well-lg', style: {paddingTop: '0px'}}) (
-        div ({className: 'row', style: {marginTop: 0, marginBottom: 10}}) (
-          h2 ({className: 'col-sm-12'}) ('Welcome back!')
+  Row ({style: {marginTop: '10em'}}) (
+    Col ({sm: 7, style: {float: 'none', margin: 'auto'}}) (
+      Well ({bsSize: 'lg', style: {paddingTop: '0px'}}) (
+        Row ({style: {marginTop: 0, marginBottom: 10}}) (
+          Col ({sm: 12}) (h2 ('Welcome back!'))
         ),
-        div ({className: 'row'}) (
-          p ({className: 'col-sm-12'}) ('Please hang tight while we load your app.')
-        ),
-        div ({className: 'row'}) (
-          div ({className: 'col-sm-12'}) (
+        Row (Col ({sm: 12}) (p ('Please hang tight while we load your app.'))),
+        Row (
+          Col ({sm: 12}) (
             div ({className: 'pull-right'}) (Spinner ({style: {top: 16, width: 42}}))
           )
         )
@@ -371,25 +369,24 @@ export const Loading = () =>
 ```
 NJSX composed:
 ```js
-export const Loading = nest (
-  div ({className: 'row', style: {marginTop: '10em'}}),
-  div ({className: 'col-sm-7', style: {float: 'none', margin: 'auto'}}),
-  div ({className: 'well well-lg', style: {paddingTop: '0px'}}) (
-    nest (
-      div ({className: 'row', style: {marginTop: 0, marginBottom: 10}}),
-      h2 ({className: 'col-sm-12'}) ('Welcome back!')
-    ),
-    nest (
-      div ({className: 'row'}),
-      p ({className: 'col-sm-12'}) ('Please hang tight while we load your app.')
-    ),
-    nest (
-      div ({className: 'row'}),
-      div ({className: 'col-sm-12'}),
-      div ({className: 'pull-right'}) (Spinner ({style: {top: 16, width: 42}}))
+export const Loading = () =>
+  nest (
+    Row ({style: {marginTop: '10em'}}),
+    Col ({sm: 7, style: {float: 'none', margin: 'auto'}}),
+    Well ({bsSize: 'lg', style: {paddingTop: '0px'}}) (
+      nest (
+        Row ({style: {marginTop: 0, marginBottom: 10}}),
+        Col ({sm: 12}),
+        h2 ('Welcome back!')
+      ),
+      nest (Row, Col ({sm: 12}), p ('Please hang tight while we load your app.')),
+      nest (
+        Row,
+        Col ({sm: 12}),
+        div ({className: 'pull-right'}) (Spinner ({style: {top: 16, width: 42}}))
+      )
     )
-  )
-)
+  ) ()
 
 ```
 
