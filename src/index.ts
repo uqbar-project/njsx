@@ -1,4 +1,4 @@
-import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react'
+import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react';
 
 // TODO: Perhaps we could add an example project
 // TODO: Replace with spread operator once Typescript suports spread of generics (https://github.com/Microsoft/TypeScript/pull/13288)
@@ -104,7 +104,7 @@ function addChild<P>(state: BuilderState<P>, child: ReactNode) {
 
 type nest = <A>(x: Builder<A>, ...xs: Builder<any>[]) => Builder<A>
 
-export const nest: nest = (...xs) =>
+export const nest: nest = <A>(...xs: Builder<any | A>[]): Builder<A> =>
   xs
     .slice(0, -1)
     .reverse()

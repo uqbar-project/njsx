@@ -371,26 +371,25 @@ export const Loading = () =>
 ```
 NJSX composed:
 ```js
-export const Loading = () =>
-  nest (
-    div ({ className: 'row', style: { marginTop: '10em' } }),
-    div ({ className: 'col-sm-7', style: { float: 'none', margin: 'auto' } }),
-    div ({ className: 'well well-lg', style: { paddingTop: '0px' } }) (
-      nest (
-        div ({ className: 'row', style: { marginTop: 0, marginBottom: 10 } }),
-        h2 ({ className: 'col-sm-12' }) ('Welcome back!')
-      ),
-      nest (
-        div ({ className: 'row' }),
-        p ({ className: 'col-sm-12' }) ('Please hang tight while we load your app.')
-      ),
-      nest (
-        div ({ className: 'row' }),
-        div ({ className: 'col-sm-12' }),
-        div ({ className: 'pull-right' }) (Spinner ({ style: { top: 16, width: 42 } }))
-      )
+export const Loading = nest (
+  div ({ className: 'row', style: { marginTop: '10em' } }),
+  div ({ className: 'col-sm-7', style: { float: 'none', margin: 'auto' } }),
+  div ({ className: 'well well-lg', style: { paddingTop: '0px' } }) (
+    nest (
+      div ({ className: 'row', style: { marginTop: 0, marginBottom: 10 } }),
+      h2 ({ className: 'col-sm-12' }) ('Welcome back!')
+    ),
+    nest (
+      div ({ className: 'row' }),
+      p ({ className: 'col-sm-12' }) ('Please hang tight while we load your app.')
+    ),
+    nest (
+      div ({ className: 'row' }),
+      div ({ className: 'col-sm-12' }),
+      div ({ className: 'pull-right' }) (Spinner ({ style: { top: 16, width: 42 } }))
     )
-  ) ()
+  )
+)
 ```
 
 ## Working with older versions
