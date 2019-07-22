@@ -5,9 +5,9 @@ import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'r
 const { assign } = Object
 const { isArray } = Array
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // CONFIGURATION
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export type ArgumentTransformation = (arg: any) => any
 
@@ -21,9 +21,9 @@ export const NJSXConfig: {
     },
   }
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // BUILDERS
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export interface Builder<P> {
   (): ReactElement<P>,
@@ -47,9 +47,9 @@ export type BuilderState<P> = Partial<P & { children: ReactNode[] }>
 
 export type BuilderRefinement<P> = (state: BuilderState<P>) => BuilderState<P>
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // FACADE
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export type NJSX = <P>(type: ReactType<P>) => Builder<P>
 const njsx = <P>(type: ReactType<P>, baseState: BuilderState<P> = {}): Builder<P> => {
@@ -98,39 +98,19 @@ function addChild<P>(state: BuilderState<P>, child: ReactNode) {
   return assign({}, state, { children: [...state.children || [], child] })
 }
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// Compose
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
+// Compose (nest)
+// ══════════════════════════════════════════════════════════════════════════════════════
 
-const err = 'compose: Functions required'
+type nest = <A>(x: Builder<A>, ...xs: Builder<any>[]) => Builder<A>
 
-const isFunction = (val: any): val is Function => typeof val === 'function'
-
-function applyPipe(f: any, g: any) {
-  if (!isFunction(g)) {
-    throw new TypeError(err)
-  }
-
-  return (...args: any[]) => g.call(null, f.apply(null, args))
-}
-
-// compose :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
-export function compose(...args: any[]) {
-  if (!arguments.length) {
-    throw new TypeError(err)
-  }
-
-  const fns = args.slice().reverse()
-
-  const head = fns[0]
-
-  if (!isFunction(head)) {
-    throw new TypeError(err)
-  }
-
-  const tail = fns.slice(1).concat((x: any) => x)
-
-  return tail.reduce(applyPipe, head)
-}
+export const nest: nest = (...xs) =>
+  xs
+    .slice(0, -1)
+    .reverse()
+    .reduce(
+      <A>(r: Builder<any>, y: Builder<any | A>): Builder<any | A> => y(r),
+      xs.slice(-1)[0]
+    )
 
 export default njsx as NJSX
