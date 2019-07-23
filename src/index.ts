@@ -98,4 +98,19 @@ function addChild<P>(state: BuilderState<P>, child: ReactNode) {
   return assign({}, state, { children: [...state.children || [], child] })
 }
 
+// ══════════════════════════════════════════════════════════════════════════════════════
+// Compose (nest)
+// ══════════════════════════════════════════════════════════════════════════════════════
+
+type nest = <A>(x: Builder<A>, ...xs: Builder<any>[]) => Builder<A>
+
+export const nest: nest = <A>(...xs: Builder<any | A>[]): Builder<A> =>
+  xs
+    .slice(0, -1)
+    .reverse()
+    .reduce(
+      <A>(r: Builder<any>, y: Builder<any | A>): Builder<any | A> => y(r),
+      xs.slice(-1)[0]
+    )
+
 export default njsx as NJSX
