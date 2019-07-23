@@ -1,4 +1,4 @@
-import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react';
+import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react'
 
 // TODO: Perhaps we could add an example project
 // TODO: Replace with spread operator once Typescript suports spread of generics (https://github.com/Microsoft/TypeScript/pull/13288)

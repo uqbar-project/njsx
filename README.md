@@ -31,6 +31,7 @@ const myView = () =>
     - [Dynamic Selectors](#dynamic-selectors)
   - [Argument Transformation](#argument-transformation)
   - [Point-free](#point-free)
+  - [Example Refactoring](#example-refactoring)
 - [Working with older versions](#working-with-older-versions)
 - [Contributions](#contributions)
 - [License](#license)
