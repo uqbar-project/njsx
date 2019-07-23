@@ -1,13 +1,13 @@
-import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react'
+import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react';
 
 // TODO: Perhaps we could add an example project
 // TODO: Replace with spread operator once Typescript suports spread of generics (https://github.com/Microsoft/TypeScript/pull/13288)
 const { assign } = Object
 const { isArray } = Array
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // CONFIGURATION
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export type ArgumentTransformation = (arg: any) => any
 
@@ -21,9 +21,9 @@ export const NJSXConfig: {
     },
   }
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // BUILDERS
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export interface Builder<P> {
   (): ReactElement<P>,
@@ -47,9 +47,9 @@ export type BuilderState<P> = Partial<P & { children: ReactNode[] }>
 
 export type BuilderRefinement<P> = (state: BuilderState<P>) => BuilderState<P>
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // FACADE
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export type NJSX = <P>(type: ReactType<P>) => Builder<P>
 const njsx = <P>(type: ReactType<P>, baseState: BuilderState<P> = {}): Builder<P> => {
