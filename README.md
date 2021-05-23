@@ -31,6 +31,7 @@ const myView = () =>
     - [Dynamic Selectors](#dynamic-selectors)
   - [Argument Transformation](#argument-transformation)
   - [Point-free](#point-free)
+  - [Example Refactoring](#example-refactoring)
 - [Working with older versions](#working-with-older-versions)
 - [Contributions](#contributions)
 - [License](#license)
@@ -303,32 +304,106 @@ If you rather all your arguments to just be interpreted as they are, you can dis
 
 ## Point-free
 
-Think point-free composition in your render function is a `pipe` dream? Think again, you can use `njsx` to compose components in a point-free style to help with the readability of deeply nested react components:
+Think point-free composition in your render is a `pipe` dream? Think again! You can use `njsx` to compose components in a point-free style to increase the readability of deeply nested components:
 
 ```jsx
-<Provider store={store}>
-  <PersistGate loading={null} persistor={persistor}>
-    <BrowserRouter>
-      <Route path="/" component={App} />
-    </BrowserRouter>
-  </PersistGate>
-</Provider>
+const Root = ({ store }) => (
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <Router history={history}>
+        <Route path='/' component={App} />
+      </Router>
+    </PersistGate>
+  </Provider>
+)
 ```
 
 Becomes:
 
 ```js
-import { compose } from 'rambda'
+import { nest } from 'njsx'
 
-compose(
-  Provider({ store }),
-  PersistGate({ loading: null, persistor }),
-  BrowserRouter,
-  Route
-)({ path: '/', component: App })()
+const Root = ({ store }) =>
+  nest(
+    Provider({ store }),
+    PersistGate({ loading: null, persistor }),
+    Router({ history }),
+    Route({ path: '/', component: App })
+  )()
 ```
 
-Please note that `compose` and `pipe` functions vary in implementation and not all will work with `njsx`, for example, `lodash/fp` seems to have issues at the moment, while `rambda` is working without issue.
+## Example Refactoring
+JSX:
+```jsx
+export const Loading = () => (
+  <Row style={{marginTop: '10em'}}>
+    <Col sm={7} style={{float: 'none', margin: 'auto'}}>
+      <Well bsSize='lg' style={{paddingTop: '0px'}}>
+        <Row style={{marginTop: 0, marginBottom: 10}}>
+          <Col sm={12}>
+            <h2>Welcome back!</h2>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col sm={12}>
+            <p>Please hang tight while we load your app.</p>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col sm={12}>
+            <div className='pull-right'>
+              <Spinner style={{top: 16, width: 42}} />
+            </div>
+          </Col>
+        </Row>
+      </Well>
+    </Col>
+  </Row>
+)
+```
+NJSX nested:
+```js
+export const Loading = () =>
+  Row ({style: {marginTop: '10em'}}) (
+    Col ({sm: 7, style: {float: 'none', margin: 'auto'}}) (
+      Well ({bsSize: 'lg', style: {paddingTop: '0px'}}) (
+        Row ({style: {marginTop: 0, marginBottom: 10}}) (
+          Col ({sm: 12}) (h2 ('Welcome back!'))
+        ),
+        Row (Col ({sm: 12}) (p ('Please hang tight while we load your app.'))),
+        Row (
+          Col ({sm: 12}) (
+            div ({className: 'pull-right'}) (Spinner ({style: {top: 16, width: 42}}))
+          )
+        )
+      )
+    )
+  ) ()
+```
+NJSX composed:
+```js
+export const Loading = () =>
+  nest (
+    Row ({style: {marginTop: '10em'}}),
+    Col ({sm: 7, style: {float: 'none', margin: 'auto'}}),
+    Well ({bsSize: 'lg', style: {paddingTop: '0px'}}) (
+      nest (
+        Row ({style: {marginTop: 0, marginBottom: 10}}),
+        Col ({sm: 12}),
+        h2 ('Welcome back!')
+      ),
+      nest (Row, Col ({sm: 12}), p ('Please hang tight while we load your app.')),
+      nest (
+        Row,
+        Col ({sm: 12}),
+        div ({className: 'pull-right'}) (Spinner ({style: {top: 16, width: 42}}))
+      )
+    )
+  ) ()
+
+```
 
 ## Working with older versions
 

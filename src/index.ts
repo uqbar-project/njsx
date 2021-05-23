@@ -5,9 +5,9 @@ import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'r
 const { assign } = Object
 const { isArray } = Array
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // CONFIGURATION
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export type ArgumentTransformation = (arg: any) => any
 
@@ -21,9 +21,9 @@ export const NJSXConfig: {
     },
   }
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // BUILDERS
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export interface Builder<P> {
   (): ReactElement<P>,
@@ -47,9 +47,9 @@ export type BuilderState<P> = Partial<P & { children: ReactNode[] }>
 
 export type BuilderRefinement<P> = (state: BuilderState<P>) => BuilderState<P>
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 // FACADE
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════════════
 
 export type NJSX = <P>(type: ReactType<P>) => Builder<P>
 const njsx = <P>(type: ReactType<P>, baseState: BuilderState<P> = {}): Builder<P> => {
@@ -97,5 +97,20 @@ function isChild(target: any): target is number | string | ReactElement<any> {
 function addChild<P>(state: BuilderState<P>, child: ReactNode) {
   return assign({}, state, { children: [...state.children || [], child] })
 }
+
+// ══════════════════════════════════════════════════════════════════════════════════════
+// Compose (nest)
+// ══════════════════════════════════════════════════════════════════════════════════════
+
+type nest = <A>(x: Builder<A>, ...xs: Builder<any>[]) => Builder<A>
+
+export const nest: nest = <A>(...xs: Builder<any | A>[]): Builder<A> =>
+  xs
+    .slice(0, -1)
+    .reverse()
+    .reduce(
+      <A>(r: Builder<any>, y: Builder<any | A>): Builder<any | A> => y(r),
+      xs.slice(-1)[0]
+    )
 
 export default njsx as NJSX
