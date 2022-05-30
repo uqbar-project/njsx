@@ -91,7 +91,7 @@ function isIgnored(target: any): target is null | undefined | boolean {
 }
 
 function isChild(target: any): target is number | string | ReactElement<any> {
-  return typeof target === 'number' || typeof target === 'string' || typeof target === 'object' && !!target.type
+  return typeof target === 'number' || typeof target === 'string' || typeof target === 'object' && target.$$typeof === Symbol.for("react.element")
 }
 
 function addChild<P>(state: BuilderState<P>, child: ReactNode) {
